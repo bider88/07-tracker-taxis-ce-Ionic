@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Platform } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import { Subscription } from 'rxjs/Subscription';
 
 @Injectable()
 export class UserProvider {
 
   key:string;
-  user:any = {};
+  private driver: Subscription;
 
   constructor(
     private _afDB: AngularFirestore,
@@ -22,11 +23,11 @@ export class UserProvider {
     key = key.toLowerCase();
 
     return new Promise( (resolve, reject) => {
-      this._afDB.doc(`/users/${key}`).valueChanges().subscribe(
+
+      this.driver = this._afDB.doc(`/users/${key}`).valueChanges().subscribe(
         data => {
           if ( data ) {
             this.key = key;
-            this.user = data;
             this.saveStorage();
             resolve(true);
           } else {
@@ -68,6 +69,17 @@ export class UserProvider {
         }
       }
     });
+  }
+
+  deleteUser() {
+    this.key = null;
+    if ( this.platform.is('cordova') ) {
+      this.storage.remove('key');
+    } else {
+      localStorage.removeItem('key');
+    }
+
+    this.driver.unsubscribe();
   }
 
 }
