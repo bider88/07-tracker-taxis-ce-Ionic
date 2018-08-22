@@ -22,7 +22,8 @@ export class MyApp {
       _userProvider.loadStorage()
           .then( exist => {
 
-            statusBar.backgroundColorByHexString('#f3f3f3');
+            statusBar.overlaysWebView(true);
+            statusBar.backgroundColorByHexString('#ffffff');
             splashScreen.hide();
 
             if ( exist ) {
