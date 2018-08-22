@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation';
 
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { UserProvider } from '../user/user';
+
 @Injectable()
 export class LocationProvider {
 
-  constructor(
-    private geolocation: Geolocation
-  ) {
+  driver: AngularFirestoreDocument<any>;
 
+  constructor(
+    private afDB: AngularFirestore,
+    private geolocation: Geolocation,
+    private _userProvider: UserProvider
+  ) {
+    this.driver = this.afDB.doc(`/users/${this._userProvider.key}`);
   }
 
   initGeolocation() {
@@ -15,14 +22,22 @@ export class LocationProvider {
       // resp.coords.latitude
       // resp.coords.longitude
 
-      console.log(resp.coords);
+      this.driver.update({
+        lat: resp.coords.latitude,
+        lng: resp.coords.longitude,
+        key: this._userProvider.key
+      });
 
       let watch = this.geolocation.watchPosition();
       watch.subscribe((data) => {
        // data can be a set of coordinates, or an error (if an error occurred).
        // data.coords.latitude
        // data.coords.longitude
-       console.log(data.coords);
+        this.driver.update({
+          lat: data.coords.latitude,
+          lng: data.coords.longitude,
+          key: this._userProvider.key
+        });
       });
 
     }).catch((error) => {
