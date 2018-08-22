@@ -3,17 +3,21 @@ import { Geolocation } from '@ionic-native/geolocation';
 
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { UserProvider } from '../user/user';
+import { Subscription } from 'rxjs/Subscription';
 
 @Injectable()
 export class LocationProvider {
 
   driver: AngularFirestoreDocument<any>;
+  private watch: Subscription;
 
   constructor(
     private afDB: AngularFirestore,
     private geolocation: Geolocation,
     private _userProvider: UserProvider
-  ) {
+  ) { }
+
+  initDriver() {
     this.driver = this.afDB.doc(`/users/${this._userProvider.key}`);
   }
 
@@ -28,8 +32,7 @@ export class LocationProvider {
         key: this._userProvider.key
       });
 
-      let watch = this.geolocation.watchPosition();
-      watch.subscribe((data) => {
+      this.watch = this.geolocation.watchPosition().subscribe((data) => {
        // data can be a set of coordinates, or an error (if an error occurred).
        // data.coords.latitude
        // data.coords.longitude
@@ -38,11 +41,19 @@ export class LocationProvider {
           lng: data.coords.longitude,
           key: this._userProvider.key
         });
+
+        console.log(data.coords);
       });
 
     }).catch((error) => {
       console.log('Error getting location', error);
     });
+  }
+
+  stopLocation() {
+    try {
+      this.watch.unsubscribe();
+    } catch (e) { console.log( JSON.stringify(e) ); }
   }
 
 }

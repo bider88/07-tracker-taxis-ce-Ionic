@@ -12,11 +12,10 @@ import { UserProvider } from '../providers/user/user';
 // Firebase
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
-import { firebaseConfig } from '../config/firebase.config';
+import { firebaseConfig, apiKey } from '../config/config';
 
 // AGM
 import { AgmCoreModule } from '@agm/core';
-import { apiKey } from './../config/googleApiKey.config';
 
 // Plugins
 import { IonicStorageModule } from '@ionic/storage';
@@ -32,12 +31,10 @@ import { LocationProvider } from '../providers/location/location';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireModule.initializeApp( firebaseConfig ),
     AngularFirestoreModule,
     IonicStorageModule.forRoot(),
-    AgmCoreModule.forRoot({
-      apiKey
-    })
+    AgmCoreModule.forRoot( apiKey )
   ],
   bootstrap: [IonicApp],
   entryComponents: [
