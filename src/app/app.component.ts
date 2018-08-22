@@ -5,21 +5,32 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
+import { UserProvider } from '../providers/user/user';
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   rootPage:any;
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+  constructor(
+    platform: Platform,
+    statusBar: StatusBar,
+    splashScreen: SplashScreen,
+    _userProvider: UserProvider
+  ) {
     platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
+      _userProvider.loadStorage()
+          .then( exist => {
 
-      this.rootPage = LoginPage;
+            statusBar.backgroundColorByHexString('#f3f3f3');
+            splashScreen.hide();
 
-      statusBar.styleDefault();
-      splashScreen.hide();
+            if ( exist ) {
+              this.rootPage = HomePage;
+            } else {
+              this.rootPage = LoginPage;
+            }
+          })
     });
   }
 }

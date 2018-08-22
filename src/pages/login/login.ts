@@ -6,6 +6,7 @@ import { Slides } from 'ionic-angular';
 
 import { AlertController } from 'ionic-angular';
 import { UserProvider } from '../../providers/user/user';
+import { HomePage } from '../home/home';
 
 @IonicPage()
 @Component({
@@ -59,10 +60,6 @@ export class LoginPage {
     }).present();
   }
 
-  login() {
-
-  }
-
   verifyUser(username: string) {
     const loading = this.loadingCtrl.create({
       content: 'Verificando ' + username + '...'
@@ -93,6 +90,10 @@ export class LoginPage {
             }).present();
           }
         });
+  }
+
+  next() {
+    this.navCtrl.setRoot( HomePage );
   }
 
 }
