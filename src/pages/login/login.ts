@@ -5,6 +5,7 @@ import { ViewChild } from '@angular/core';
 import { Slides } from 'ionic-angular';
 
 import { AlertController } from 'ionic-angular';
+import { UserProvider } from '../../providers/user/user';
 
 @IonicPage()
 @Component({
@@ -18,7 +19,8 @@ export class LoginPage {
   constructor(
     public navCtrl: NavController,
     private alertCtrl: AlertController,
-    public loadingCtrl: LoadingController
+    public loadingCtrl: LoadingController,
+    public _userProvider: UserProvider
   ) {
   }
 
@@ -50,7 +52,6 @@ export class LoginPage {
         {
           text: 'Ingresar',
           handler: data => {
-            console.log(data);
             this.verifyUser(data.username);
           }
         }
@@ -69,9 +70,29 @@ export class LoginPage {
 
     loading.present();
 
-    setTimeout(() => {
-      loading.dismiss();
-    }, 3000);
+    this._userProvider.verifyUser( username )
+        .then( success => {
+
+          loading.dismiss();
+
+          if ( success ) {
+            this.slides.lockSwipes(false);
+            this.slides.freeMode = true;
+
+            this.slides.slideNext();
+
+            this.slides.lockSwipes(true);
+            this.slides.freeMode = false;
+          } else {
+            this.alertCtrl.create({
+              title: `Username ${username} incorrecto`,
+              subTitle: 'Favor de hablar con el Admin',
+              buttons: [
+                'Aceptar'
+              ]
+            }).present();
+          }
+        });
   }
 
 }
