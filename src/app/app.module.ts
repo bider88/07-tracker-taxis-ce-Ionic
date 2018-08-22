@@ -14,6 +14,10 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { firebaseConfig } from '../config/firebase.config';
 
+// AGM
+import { AgmCoreModule } from '@agm/core';
+import { apiKey } from './../config/googleApiKey.config';
+
 // Plugins
 import { IonicStorageModule } from '@ionic/storage';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -30,7 +34,10 @@ import { LocationProvider } from '../providers/location/location';
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
+    AgmCoreModule.forRoot({
+      apiKey
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
